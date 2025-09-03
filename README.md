@@ -1,3 +1,3 @@
-# sonic-pi-beats
+# livecoding stuff
 
-music stuff
+only code, no samples.
