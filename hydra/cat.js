@@ -1,0 +1,17 @@
+osc([20, 50, 100], 0.125, 0.8)
+  .kaleid(8).rotate(0, 0.2)
+  .pixelate([200, 20, 2], 20)
+  .modulate(o0, 0.5)
+  .rotate(()=>(Math.sin(time/8)))
+  .brightness(-0.5).out(o1)
+
+src(o1)
+  .kaleid()
+  .scale(1, 1, window.width/window.height)
+  .mult(s0)
+  .add(src(s0).invert().modulate(noise(1, ()=>0.3)))
+  .hue(0.9).scrollX(0, -0.3).rotate(0, -0.1)
+  .diff(src(o0).scrollX(-0.1).scale(1.266))
+  .out()
+
+s0.initImage("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/2560px-Cat_August_2010-4.jpg")

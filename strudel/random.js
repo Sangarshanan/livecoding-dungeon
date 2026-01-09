@@ -1,3 +1,5 @@
+// Jux effect: https://strudel.cc/learn/effects/#jux
+
 // Misc drums percs
 
 drums: stack(
@@ -215,3 +217,54 @@ _breaks: s("breaks/2").fit()
   .rib("<25 20 10 3 30>", 1)
 .almostNever(ply("2 | 4"))
 
+
+// Interesting techno idea + Cool arp
+
+kDrums: s("cp bd").beat("1, 2, 5", 8)
+  .sometimes(x=>x.ply("2"))
+  .speed(1.4)
+  .sometimes(fast(2)).lpf(saw.range(100, 1200).slow(16))
+
+
+t: n("[0 0 0 0] [2 5] [2 3] [2 3]".fast(2).add("<0 0 3 2 -3>".fast(2)))
+  .scale("G2:major")
+  .sound("casio")
+  .degradeBy("0 0.7 0.7 0.7 0.7") 
+  .lpf(perlin.range(1300,2200))
+  .lpq(0.3)
+  .room(0.5).sz(1)
+  .delay(0.5)
+  .delaysync("<3 2 4>".div(8))
+  .cut(0.4)
+
+s_fastarp: n("<0 2 5 7>*4").scale("G3:major")
+  .s("supersaw").lpf(tri.range(1000, 2500).slow(8)).decay(0.2).fast(8).gain(tri.range(0.3, 0.7).slow(16))
+
+
+// Heavy bass
+setcpm(170 / 4)
+
+$: s("wt_digital").note("F1")
+  .fm(1.3).fmh(0.99).fmwave("sawtooth")
+  .room(0.9)
+
+$: s(`<
+  bd@2 ~@2
+  ~ bd ~@2
+  bd@2 ~ [bd:0:0.7 bd:0:0.9]
+  ~ bd ~@2
+  bd@2 ~@2
+  ~ bd ~@2
+  bd@2 ~ ~
+  ~ [~ bd] ~ bd
+>*8`).bank("tr909")
+  .duck(4).duckatt(0.3).duckdepth(0.7)
+
+$: s(`<
+  ~ sd
+>*4`).bank("tr909")
+
+$: s("hh*4").bank("tr909").n(9)
+
+$: n(irand(18).seg(16).add(5)).scale("F:minor")
+  .gain(0.5).fm(1.2).fmh(0.99)
