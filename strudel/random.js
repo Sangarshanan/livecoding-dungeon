@@ -268,3 +268,40 @@ $: s("hh*4").bank("tr909").n(9)
 
 $: n(irand(18).seg(16).add(5)).scale("F:minor")
   .gain(0.5).fm(1.2).fmh(0.99)
+
+// Make drops
+all(x => x.reset
+  ("<x@4 x*[4 [8 16]] x@4>")
+)
+
+
+// Texture track
+
+// melody
+p1: n("[1 2 3 5 2 3 5 7] <[5 3 6 2] [7]!2>")
+    .sound("piano")
+    .scale(`<D5:minor:pentatonic!9
+             D5:major:pentatonic!9
+             D5:dorian!9>`)
+    .delay(".25:.5")
+
+// pad
+p2: n("[2,4,6] [3,5,7]")
+    .scale(`<D3:minor:pentatonic!9 
+             D3:major:pentatonic!9
+             D3:dorian!9>`)
+    .sound("sawtooth")
+    .room("1.3")
+    .gain("0.8").sustain("0.2")
+    .lpf("<400 2400 800 1200>")
+
+// hihat
+p3: sound("[hh hh:3]")
+    .bank("RolandTR808")
+    .room("0.6")
+
+// rimshot
+p4: sound("rim")
+    .room("1.6")
+    .gain(".25")
+

@@ -135,3 +135,12 @@ note("[c,e,g] ~ [d,f,a] ~ [e,g,b] ~ ~ [c,e,g]")
   .s("piano")
   .room(0.3)
 ```
+
+
+## Strudel Channels!!! 
+
+- https://www.youtube.com/@Switch-Angel
+- https://www.youtube.com/@gglossingg
+- https://www.youtube.com/@Prod.peppin
+- https://www.youtube.com/@aviarastudio
+- https://www.youtube.com/@duckattack-sound
