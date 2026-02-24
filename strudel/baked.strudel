@@ -1,0 +1,93 @@
+setcpm(170 / 4)
+
+// From switch angel
+
+// Acid env
+register('acidenv', (x, pat) => pat.lpf(100)
+        .lpenv(x * 9).lps(.2).lpd(.12)
+)
+// Usage
+_$: n("<0 4 0 [9 7 5 6] 5>*4").scale("g:minor").trans(-12).s("sawtooth!16").acidenv(slider(0))
+
+// Rollers
+
+window.roller = (acidenv = .5) => {
+  return s("bstab:1:.6,supersaw:1:.6,white:0:.3").detune(rand)
+    .begin("<0 .02>/4").room(.5).acidenv(acidenv).lpq(0).postgain(1.2).diode([2.5,.6])
+  .sustain(.45).dec(.2)
+}
+
+// fill in gaps between events
+register('fill', function (pat) {
+  return new Pattern(function (state) {
+    const lookbothways = 1;
+    // Expand the query window
+    const haps = pat.query(state.withSpan(span => new TimeSpan(span.begin.sub(lookbothways), span.end.add(lookbothways))));
+    const onsets = haps.map(hap => hap.whole.begin)
+      // sort fractions
+      .sort((a, b) => a.compare(b))
+      // make unique
+      .filter((x, i, arr) => i == (arr.length - 1) || x.ne(arr[i + 1]));
+    const newHaps = [];
+    for (const hap of haps) {
+      // Ingore if the part starts after the original query
+      if (hap.part.begin.gte(state.span.end)) {
+        continue;
+      }
+
+      // Find the next onset, to use as an offset
+      const next = onsets.find(onset => onset.gte(hap.whole.end));
+
+      // If there is no next onset, the query window is not large enough.
+      // We bail out to avoid a crash.
+      if (next === undefined) {
+        continue;
+      }
+
+      // Ignore if the part ended before the original query, and hasn't expanded inside
+      if (next.lte(state.span.begin)) {
+        continue;
+      }
+
+      const whole = new TimeSpan(hap.whole.begin, next);
+      // Constrain part to original query
+      const part = new TimeSpan(hap.part.begin.max(state.span.begin), next.min(state.span.end));
+      newHaps.push(new Hap(whole, part, hap.value, hap.context, hap.stateful));
+    }
+    return newHaps;
+  });
+});
+
+// trance gate
+register('trancegate', (density, seed, length, x) => {
+  density = reify(density).add(.5)
+  return x.struct(rand.mul(density).round().seg(16).rib(seed, length)).fill().clip(.7)
+})
+
+
+//increasing the delay increases the feedback as well
+register('dly', (amt, x) =>{ 
+  amt = reify(amt)
+  return  x.delay(amt.mul(.8)).delayfeedback(amt.pow(2)).mask(amt.floor().inv()) 
+})
+
+// colorparty
+register('colorparty', (p, pat) => {
+ const colors = ['blue', 'yellow', 'violet', 'green', 'orange', 'cyan', 'magenta', 'white']
+   return pat.color(colors.at(Math.floor(p * colors.length)))
+})
+
+// Example
+_$: s("sawtooth").trancegate(0.45, 30, 1).set(roller()).dly(.2)
+
+
+// Hard kick
+window.hbd = (wt = "wt_hbd",click = "hclick:6", warp = 0.1) => {
+  return stack(s(wt).wtenv(1).wtatt(.72).FX(dist(1.5)).warp(warp)
+    .warpmode(15)
+    .att(.2),
+    s(click).FX(gain(.6)),)
+}
+
+// lpf between 0 and 1
+register('rlpf', (x, pat) => { return pat.lpf(pure(x).mul(12).pow(4)) })

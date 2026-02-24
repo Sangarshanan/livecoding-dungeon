@@ -7,7 +7,7 @@ Last night: https://www.youtube.com/watch?v=CNishpWbFx4i
 Songs list: https://github.com/eefano/strudel-songs-collection
 
 
-## Tutorial
+## Docs
 
 Playing note patterns from a scale
 ```js
@@ -22,7 +22,6 @@ Pulsating pattern
 ```js
 $: s("pulse!8").dec(.1).fm(time).fmh(time)
 ```
-
 
 #### Different Note Pattern Techniques
 
@@ -136,6 +135,20 @@ note("[c,e,g] ~ [d,f,a] ~ [e,g,b] ~ ~ [c,e,g]")
   .room(0.3)
 ```
 
+- Type S before a pattern to solo it, S$: <pattern> rather than $: <pattern>
+
+### Misc Helper methods
+
+```js
+const vol = slider(0.8, 0, 1)
+all(x => x.mul(postgain(vol)))
+```
+
+## Prebakes
+
+- https://raw.githubusercontent.com/IAmSpring/StrudelLive/refs/heads/main/server/strudel-knowledge.ts
+- https://github.com/switchangel/strudel-scripts/blob/main/prebake.strudel
+- https://codeberg.org/glossing/Strudel_Scripts/src/branch/main/scripts.mjs
 
 ## Strudel Channels!!! 
 
@@ -144,3 +157,8 @@ note("[c,e,g] ~ [d,f,a] ~ [e,g,b] ~ ~ [c,e,g]")
 - https://www.youtube.com/@Prod.peppin
 - https://www.youtube.com/@aviarastudio
 - https://www.youtube.com/@duckattack-sound
+
+
+### Cool vids
+
+- https://www.youtube.com/shorts/Jt9moluvxUo

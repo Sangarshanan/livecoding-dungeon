@@ -305,3 +305,14 @@ p4: sound("rim")
     .room("1.6")
     .gain(".25")
 
+
+// RISER AND FALL
+setcpm(170 / 4)
+
+fall: s("white").struct("< x -!3 >")
+.adsr("0:12:0:0").gain(0.25).dist("1.5:.6")
+.hpf("1000")
+.lpf("20").lpa(4).lpenv(-10).lpd(0).lps(0)
+
+// riser model 1
+$: "sd".ply("<4 8 16 32 4@100>").s().gain(0.1).decay(0.08)
