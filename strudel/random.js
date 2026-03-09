@@ -316,3 +316,47 @@ fall: s("white").struct("< x -!3 >")
 
 // riser model 1
 $: "sd".ply("<4 8 16 32 4@100>").s().gain(0.1).decay(0.08)
+
+
+// beat and vib arp synth
+$:s("sawtooth,tri,saw,sine")
+  .gain(saw.rev().range(3,1))
+  .lpf(saw.rangex(200,2200).slow(8))
+  .beat("3,7,9",16).vib(2,.5)
+  .clip(.7)
+  .delay(1/2)
+  .diode("1:.5")
+  .acidenv(slider(0))
+
+
+
+// ambience
+
+ambience: note("<0, 4, 8, 11> <6 2 4 3>*2")
+  .scale("c:minor")
+  .add(note("0, 0.11, -0.11, 0.19, -0.19"))
+  .s("supersaw")
+  .attack(0.1).release(0.1)
+  .rlpf(0.3).lpq(2).phaser(0.1)
+  .room("1:10")
+  .postgain(0.5)
+  .duck(0.7)
+  ._spectrum()
+
+
+// Acid techno
+
+setcps(140/60/4)
+//1408 in bed with my cat staring at the birds.. cloudy day with plans later!! 
+
+
+$: s("bd*4").gain(0.6)
+
+$: s("[acid_kicks:9]*4").duck("3:4").duckdepth(.8).o(2).decay("<.5>").fm(2).sustain(0).scope()
+$:  s("[percs:8]*2").decay(.1).delay(1).lpf(slider(0,0,900)).scope()._spectrum()
+$: n(irand(24)).sound("saw").room(2).diode("<.1 .5>").acidenv(slider(0.154)).decay(0.5).seg(16).lpf(600).scope()
+$: s("[acid_hh:2]*16").decay(0.05).gain(0.5)._spectrum().scope()
+
+$: s("pulse").scale("c:minor").vowel("a e i o u i").delay(1).delayfb(.5).delaysync(1).orbit(2).seg(16).lpf(600).scope()
+$: n(irand(32)).sound("gm_fx_echoes").decay(.5).sus(4).seg(16).lpf(900).acidenv(slider(0))._spectrum()
+$: s("[wt_digital:5,sawooth]!16").wt(.4).wtenv(.4).acidenv(slider(0.376)).o(2).scope()

@@ -6,6 +6,7 @@ Last night: https://www.youtube.com/watch?v=CNishpWbFx4i
 
 Songs list: https://github.com/eefano/strudel-songs-collection
 
+Warm: https://warm.strudel.cc/
 
 ## Docs
 
@@ -143,6 +144,11 @@ note("[c,e,g] ~ [d,f,a] ~ [e,g,b] ~ ~ [c,e,g]")
 const vol = slider(0.8, 0, 1)
 all(x => x.mul(postgain(vol)))
 ```
+
+### Tutorial
+
+- https://uzu.lurk.org/t/i-took-some-notes-from-glossings-lfo-tutorial/6098
+
 
 ## Prebakes
 

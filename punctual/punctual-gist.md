@@ -1,13 +1,9 @@
--- fit 3 $ circle [sin cps, osc 0] [osc 0.5, 0.5] * (osc ft) * 0.2 >> video;
--- fit 3 $ circle [0, sin cps] [osc 0.5, 0.5] * 0.2 >> video;
+circle [0.0, 0.0] (osc ft * 0.3) >> rgb;
+circle [osc 0.1, 0.0] (osc ft * 0.3) * [0,0,1] >> add;
+circle [0.1, osc 0.1] (osc ft * 0.3) * [0,1,0] >> add;
 
-circle [0.0, 0.0] (osc ft) * 0.3 >> red;
-fit 1 $ circle [osc 0.1, 0.0] (osc ft) * 0.3 >> blue;
-fit 1 $ circle [0.1, osc 0.1] (osc ft) * 0.3 >> green;
-
-
--- mesh [0,0.1] [0.5,0.5] * (osc ft) * 0.2 >> blue;
--- mesh [0,-0.1] [0.5,0.5] * (osc ft) * 0.2 >> video;
+-- mesh [0,0.1] [0.5,0.5] * (osc ft) * 0.2 >> rgb;
+-- mesh [0,-0.1] [0.5,0.5] * (osc ft) * 0.2 >> rgb;
 
 -- sin(log(fx * fy)) >> blue;
 -- osc(fx * fy * ft) * 0.6 >> video;

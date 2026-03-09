@@ -1,23 +1,190 @@
-setcpm(170 / 4)
+// Because the internet. Thank you
+// https://raw.githubusercontent.com/IAmSpring/StrudelLive/refs/heads/main/server/strudel-knowledge.ts
+// https://github.com/switchangel/strudel-scripts/blob/main/prebake.strudel
 
-// From switch angel
+// HERE BE DRAGONS
 
-// Acid env
+// await prebake('https://glossing.dev/scripts.js');
+
+/* Acid env
+acidenv: n("<0 4 0 [9 7 5 6] 5>*4").scale("g:minor").trans(-12).s("sawtooth!16").acidenv(slider(0))
+*/
 register('acidenv', (x, pat) => pat.lpf(100)
         .lpenv(x * 9).lps(.2).lpd(.12)
 )
-// Usage
-_$: n("<0 4 0 [9 7 5 6] 5>*4").scale("g:minor").trans(-12).s("sawtooth!16").acidenv(slider(0))
 
-// Rollers
+/*
+Rollers (acid bass with moderate envelope)
 
+roller: roller(.6).note("<a1 c2 e2 g1>")
+*/
 window.roller = (acidenv = .5) => {
   return s("bstab:1:.6,supersaw:1:.6,white:0:.3").detune(rand)
     .begin("<0 .02>/4").room(.5).acidenv(acidenv).lpq(0).postgain(1.2).diode([2.5,.6])
   .sustain(.45).dec(.2)
 }
 
-// fill in gaps between events
+/*
+
+oneshot — Plays a sound once, quantised to the next multiple of grid cycles. Good for drops and transitions.
+$: s("reverbkick").oneshot(4)
+
+will play it, but only at the next 4-divisible cycle (t = 0, 4, 8, etc)
+Useful for locking it into relevant parts of the arrangement
+*/
+
+register('oneshot', (grid, pat) => {
+  const t = getTime();
+  const qt = Math.ceil(t / grid) * grid;
+  return pat.filterWhen((t) => t >= qt && t < qt + 1);
+});
+
+/*
+o — Sets orbit and respects global mute()/solo() calls. Use instead of raw .orbit().
+kick: s("bd*4").o(1)
+
+solo(1, 2)   // only orbits 1 and 2 play
+mute(3)      // orbit 3 goes silent
+*/
+setGainCurve(x => Math.pow(x, 2))
+
+window.soloedOrbits = []
+window.soloOrbit = (...orbits) => {
+  window.soloedOrbits = orbits
+}
+window.mutedOrbits = []
+window.solo = (...orbits) => {
+  window.soloedOrbits = orbits
+}
+window.mute = (...orbits) => {
+  window.mutedOrbits = orbits
+}
+register('o', (orbit, pat) => {
+  pat = pat.orbit(orbit)
+  if (mutedOrbits.includes(orbit)) {
+    return pat.hush()
+  }
+  if (!soloedOrbits.length || soloedOrbits.includes(orbit)) {
+    return pat
+  }
+  return pat.hush()
+  
+})
+
+/*
+Accent: Add velocity and sharper envelope to hits with an accent value > 0. 
+Accent value is 0–8, where 8 is the most accented.
+Can be used on any pattern, but especially useful for drums.
+
+kick: s("bd*4").o(1).accent("<0 1>").postgain(0.4)
+*/
+register('accent', (accent, pat) => {
+   if (accent == 0) {
+     return pat
+   }
+  return pat.mul(velocity(1 + (accent/8)))
+    .mul(lpenv(1 + (accent /5))).lpd(.13).lpa(.01)
+})
+
+/* trance gate
+
+trancegate 
+— Chops a pad into a randomised 16-step stutter gate.
+- Density (0–1) controls how many steps open
+- Seed fixes the random pattern
+- Length is how many cycles before it repeats.
+tg: s("sawtooth").trancegate(0.45, 30, 1).set(roller()).dly(.2)
+*/
+
+register('trancegate', (density, seed, length, x) => {
+  density = reify(density).add(.5)
+  return x.struct(rand.mul(density).round().seg(16).rib(seed, length)).fill().clip(.7)
+})
+
+
+/*increasing the delay increases the feedback as well (scales accordingly)
+pluck: note("c4 eb4 g4 bb4").s("gm_electric_guitar_clean").dly(.5)
+*/
+register('dly', (amt, x) =>{ 
+  amt = reify(amt)
+  return  x.delay(amt.mul(.8)).delayfeedback(amt.pow(2)).mask(amt.floor().inv()) 
+})
+
+/* colorparty
+- Assigns a colour from a fixed party palette (0–1 selects from 8 colors). Useful for distinguishing tracks visually.
+
+melody: note("c4 e4 g4 b4").s("piano").colorparty(.3)
+*/
+
+register('colorparty', (p, pat) => {
+ const colors = ['blue', 'yellow', 'violet', 'green', 'orange', 'cyan', 'magenta', 'white']
+   return pat.color(colors.at(Math.floor(p * colors.length)))
+})
+
+
+/*
+Exponential LPF and HPF rescaler: input 0–1 maps to a musically useful frequency range. Much smoother to automate than raw Hz.
+
+pad: note("c3 eb3 g3").s("supersaw").rlpf(.4).room(.5)
+pad: note("c3 eb3 g3").s("supersaw").rhpf(.4).room(.5)
+
+*/
+register('rlpf', (x, pat) => { return pat.lpf(pure(x).mul(12).pow(4)) })
+register('rhpf', (x, pat) => { return pat.hpf(pure(x).mul(12).pow(4)) })
+
+
+
+/* Moves hits off the grid and adds velocity variation
+
+$: s("bd hh sd hh").humanize(slider(0.0328, 0, 1))
+  .bank("tr909")
+  ._pianoroll()
+
+metronome: s("hh*8").n(9).dec(0.3)
+
+*/
+register('humanize', (amt, pat) => {
+  const amtC = clamp(amt, 0, 1);
+  return pat.withHaps((haps) => {
+    return haps.map((hap) => {
+      const offset = 0.1 * amtC * (2 * Math.random() - 1);
+      return hap.withSpan((span) => span.withTime(t => t + offset));
+    })
+  }).withValue((v) => ({ ...v, velocity: (v.velocity ?? 1) + 0.5 * amtC * (2 * Math.random() - 1) }));
+});
+
+/*
+Gain applied after all effects have been processed, so it won't cause distortion.
+pad: note("c3 eb3 g3").s("supersaw").pg(1.5)
+*/
+register('pg', (pgain, x) => {
+  return x.mul(postgain(pgain))
+})
+
+
+/* Oldschool timestretching function 
+@example
+$: s("bd").ts(5)
+*/
+
+Pattern.prototype.ts = function(cycles,segments = 16) {
+  cycles = reify(cycles)
+  return this.scrub(saw.seg(cycles.mul(segments))).slow(cycles)
+    .sustain(1)
+}
+
+register('octave', (oct, pat) => {
+  const transp = (oct - 3) * 12
+  return pat.transpose(transp)
+
+})
+
+
+/*
+helper method to fill in the gaps between hits, for a more legato sound.
+
+bass: note("<c2 eb2 g2 f2>").s("sawtooth").lpf(600).fill()
+*/
 register('fill', function (pat) {
   return new Pattern(function (state) {
     const lookbothways = 1;
@@ -58,36 +225,61 @@ register('fill', function (pat) {
   });
 });
 
-// trance gate
-register('trancegate', (density, seed, length, x) => {
-  density = reify(density).add(.5)
-  return x.struct(rand.mul(density).round().seg(16).rib(seed, length)).fill().clip(.7)
+
+// ifit — Timestretches a sample to fit a given number of cycles cleanly, clipped to duration 1.
+// loop: s("breaks").ifit(2)
+// loop: s("drums").n(0).ifit(2).accent(2)
+
+register('ifit', (cycles, pat) => {
+  return pat.inside(cycles,fit).slow(cycles).clip(1)
 })
 
 
-//increasing the delay increases the feedback as well
-register('dly', (amt, x) =>{ 
-  amt = reify(amt)
-  return  x.delay(amt.mul(.8)).delayfeedback(amt.pow(2)).mask(amt.floor().inv()) 
-})
-
-// colorparty
-register('colorparty', (p, pat) => {
- const colors = ['blue', 'yellow', 'violet', 'green', 'orange', 'cyan', 'magenta', 'white']
-   return pat.color(colors.at(Math.floor(p * colors.length)))
-})
-
-// Example
-_$: s("sawtooth").trancegate(0.45, 30, 1).set(roller()).dly(.2)
-
-
-// Hard kick
-window.hbd = (wt = "wt_hbd",click = "hclick:6", warp = 0.1) => {
-  return stack(s(wt).wtenv(1).wtatt(.72).FX(dist(1.5)).warp(warp)
-    .warpmode(15)
-    .att(.2),
-    s(click).FX(gain(.6)),)
+window.registerFunc = (name, func) => {
+  //ensures it will work in mondo notation
+  strudelScope[name] = func
+  //ensures it will work in mini notation
+  window[name] = func
 }
 
-// lpf between 0 and 1
-register('rlpf', (x, pat) => { return pat.lpf(pure(x).mul(12).pow(4)) })
+/*
+hats: noisehat(8, tri, 4, .01, .03).sometimes(ply(2)).postgain(0.5)
+*/
+registerFunc('noisehat', (
+  seg = 16, modu = tri, speed = 4, min = .05, max = .12
+) => s('white').seg(seg).dec(modu.fast(4).range(min,max)))
+
+
+/*
+zap — Pitch-envelope sine blip. Good for laser/zap effects or percussive tones.
+
+zaps: zap(.9, .08, "c4").fast(4)
+*/
+registerFunc('zap', (amount = .8, speed = .1,note = 'c3', ) => s("sine").penv(reify(amount).mul(120)).note(note).pdec(speed).dec(speed).o(8))
+
+/*
+Fun to trigger at the end of bars for weird glitchy fills
+
+all(x => x.glitch(rand))
+*/
+register('glitch', (amt, pat) => {
+  return pat.fmap((v) => {
+    const keys = Object.keys(v);
+    const numKeys = keys.length;
+    for (let i = 0; i < numKeys; i++) {
+      const k = keys[i];
+      if (['orbit', 'duckorbit'].includes(k)) continue;
+      const rand = 2 * Math.random() - 1;
+      const val = v[k];
+      const isNumber = typeof val === 'number';
+      if (k === 'note' && !isNumber) {
+        const midi = noteToMidi(val);
+        v[k] = Math.round(Math.max(midi * (1 + amt * 0.5 * Math.random()), 24));
+      } else if (isNumber) {
+        v[k] *= 1 + rand * amt;
+      }
+    }
+    return v;
+  });
+});
+

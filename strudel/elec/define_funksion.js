@@ -8,10 +8,10 @@ let h = s("hh:1*4").sometimes(fast("2"))
   .bank('SequentialCircuitsDrumtracks').room(.5)
   .gain("0.8,0.9(5,8,-1)")
 
-let m3 = "c3 eb3(3,8) c4/2 g3*2"
+let m3 = "c4 eb4(3,8) c5/2 g4*2"
 .superimpose(
-  x=>x.slow(2).add(12),
-  // x=>x.slow(4).sub(5)
+  x=>x.slow(2).add(12),  
+  x=>x.slow(4).sub(5)
 ).note().s('piano').clip(1)
 .scale('c3:minor')
 .release(.1).room(1).gain(0.3)
@@ -46,7 +46,10 @@ let vox = "<0 ~@3 0 ~@4 ~ ~@2 0 1>/8".pickRestart([
 ]).scale('c5:minor').s('gm_ocarina').vib(5).vibmod(.9).gain(0.6).room(.8)
 
 $:arrange(
+  [8, stack(b)],
   [8, stack(h, b, p)],
   [8, stack(b, m3, k)],
-  [200, stack(b, m3, k, pad, vox)],
+  [50, stack(b, m3, k, pad, vox)],
+  [6, stack(m3)],
+  [1000, stack(silence)]
 )
