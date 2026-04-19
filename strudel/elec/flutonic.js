@@ -25,21 +25,6 @@ shape([4,5,6].fast(0.1).smooth(1),0.000001,[0.2,0.7].smooth(1))
 .out()
 //
 
-_f1: s("flute-recordings")
-  .loopAt(4)
-  .begin("<0.01>")
-  .end("<.05>")
-  .fast(32)
-  .gain(2)
-
-f2: s("flute-recordings")
-  .n(2)
-  .end(0.9)
-  .lpf(sine.range(2500, 3000))
-  .room(0.5)
-  .loop(1)
-  .gain(slider(2.2, 0.1, 3, 0.1))
-
 _texture: note("[g#4 g#4 g#4 g#4] [f#4 f#4 f#4 f#4]")
   .s("gm_pad_choir")
   .add(note(perlin.range(-0.1, 0.1)))

@@ -283,3 +283,120 @@ register('glitch', (amt, pat) => {
   });
 });
 
+
+/*
+Illegal glide: its stateful and can break stuff
+*/
+
+window.glide = register(
+  'glide',
+  (time, pat) => {
+    let curr = [],
+      prev = [],
+      lastT = null;
+    const query = (state) => {
+      const trig = !!state.controls._cps; // an actual trigger as opposed to lookahead
+      const haps = pat.query(state);
+      const output = [];
+      haps.map((hap) => {
+        const { value, whole } = hap;
+        const t = Number(whole.begin);
+        if (trig && (lastT == null || lastT !== t)) {
+          prev = curr;
+          curr = [];
+          lastT = t;
+        }
+        const glideHaps = time.query(state.setSpan(hap.wholeOrPart()));
+        glideHaps.map((glideHap) => {
+          const part = hap.part.intersection(glideHap.part);
+          if (!part) return;
+          const context = hap.combineContext(glideHap);
+          const glideT = glideHap.value;
+          const freqF = getFrequencyFromValue(value, value.s === 'sbd' ? 29 : 36); // target
+          const freqI = prev.length
+            ? prev.reduce((closest, v) => {
+                const phase = glideT > 0 ? Math.min((t - v.t) / glideT, 1) : 1;
+                const cand = v.freqI + phase * (v.freqF - v.freqI);
+                if (closest == null) return cand;
+                return Math.abs(cand - freqF) < Math.abs(closest - freqF) ? cand : closest;
+              }, null)
+            : freqF;
+          if (trig) {
+            curr.push({ freqI, freqF, t });
+          }
+          let newVal = value;
+          if (Math.abs(freqF - freqI) > 1e-6) {
+            newVal = {
+              ...value,
+              panchor: 0,
+              psustain: 0,
+              pattack: 0,
+              pdecay: glideT,
+              penv: -12 * Math.log2(freqF / freqI),
+            };
+          }
+          output.push(new Hap(whole, part, newVal, context));
+        });
+      });
+      return output;
+    };
+    return new Pattern(query);
+  },
+  false,
+);
+
+/*
+Riser: Add a customizable riser. You are given access to `rise` which is a 0-1 variable
+$: riser(16, 8, (x, rise) => x.s("supersaw").detune(rise))
+
+*/
+
+window.riser = (speed = 16, cycles = 16, callback = (x, _rise) => x) => {
+  return saw
+    .slow(cycles)
+    .fmap((v) => v * v)
+    .apply((rise) =>
+      s('pulse')
+        .seg(speed)
+        .note(rise.mul(24))
+        .add(note('F1'))
+        .lpf(rise.range(50, 20000))
+        .apply((x) => callback(x, rise)),
+    );
+};
+
+
+// Arp(up). Instead of the normal arp which just cycles back around to the initial note when
+// inputting an index above the total # of notes, `arpu` will change the octave up/down
+/*
+  @example
+  $: note("[A2,C3,E5]").arpu("0 1 2 3 4 -1 -2 -3".fast(2))
+*/
+window.arpu = register(
+  'arpu',
+  (indices, pat) => pat.arpWith((haps) =>
+    reify(indices).fmap((i) => {
+      const len = haps.length;
+      const oct = Math.floor(i / len);
+      const base = haps[(i - oct * len) % len];
+      return base.withValue((v) => ({
+        ...v,
+        note: parseNumeral(v.note) + 12 * oct,
+      }));
+    })
+  ),
+  false,
+);
+
+
+// Allows you to reverse a sound and use it as a sweep up
+/*
+  @example
+  $: sweep("bd", 0.5, 1)
+*/
+window.sweep = (name, soundLen = 1, totLen = 8) => {
+  return arrange(
+    [totLen - soundLen, silence],
+    [soundLen, s(name).slow(soundLen).fit().mul(speed(-1))],
+  );
+};

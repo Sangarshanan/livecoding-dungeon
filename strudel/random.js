@@ -360,3 +360,22 @@ $: s("[acid_hh:2]*16").decay(0.05).gain(0.5)._spectrum().scope()
 $: s("pulse").scale("c:minor").vowel("a e i o u i").delay(1).delayfb(.5).delaysync(1).orbit(2).seg(16).lpf(600).scope()
 $: n(irand(32)).sound("gm_fx_echoes").decay(.5).sus(4).seg(16).lpf(900).acidenv(slider(0))._spectrum()
 $: s("[wt_digital:5,sawooth]!16").wt(.4).wtenv(.4).acidenv(slider(0.376)).o(2).scope()
+
+
+// use layers techno
+
+$: n("-4!6 -4#!2 -3!4 -1!2 0b!2").scale("a:minor:pentatonic").s("supersaw")
+  .layer(x=>x.clip(0.5),
+         x=>x.crush(3),
+         x=>x.clip(0.025).dist(4).gain(0.15))
+  .postgain(0.45)
+  ._scope()
+
+
+// Epic Melody
+
+_harmony: note("<[c3,g3,e4]!2 [a2,e3,c4]!2 [f2,c3,a3]!2 [g2,d3,b3]!2>*2")
+  .s("gm_fx_soundtrack")
+  .attack(0.4).release(0.6)
+  .room(0.8).roomsize(6)
+  .gain(0.8)
