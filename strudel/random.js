@@ -352,7 +352,7 @@ setcps(140/60/4)
 
 $: s("bd*4").gain(0.6)
 
-$: s("[acid_kicks:9]*4").duck("3:4").duckdepth(.8).o(2).decay("<.5>").fm(2).sustain(0).scope()
+$: s("[bd:9]*4").duck("3:4").duckdepth(.8).o(2).decay("<.5>").fm(2).sustain(0).scope()
 $:  s("[percs:8]*2").decay(.1).delay(1).lpf(slider(0,0,900)).scope()._spectrum()
 $: n(irand(24)).sound("saw").room(2).diode("<.1 .5>").acidenv(slider(0.154)).decay(0.5).seg(16).lpf(600).scope()
 $: s("[acid_hh:2]*16").decay(0.05).gain(0.5)._spectrum().scope()
