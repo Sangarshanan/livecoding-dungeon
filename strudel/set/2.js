@@ -1,8 +1,10 @@
 // just techno
 
-setCps(0.5)
+await import('https://glossing.dev/scripts.js')
+await (async () => { (0, eval)(await (await fetch('https://raw.githubusercontent.com/switchangel/strudel-scripts/refs/heads/main/prebake.strudel')).text()); })();
 
-let scale = "Eb:dorian"
+setCps(0.5)
+setScale("Eb:dorian")
 
 $: s("bd*4").duck("2").duckattack(.07).decay("<.5>").fm(100).fmh(10)
 

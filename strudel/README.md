@@ -1,12 +1,8 @@
 ### Cool Examples
 
-Bird of feather: https://tinyurl.com/yckc54t6
-
-Last night: https://www.youtube.com/watch?v=CNishpWbFx4i
-
-Songs list: https://github.com/eefano/strudel-songs-collection
-
-Warm: https://warm.strudel.cc/
+- Sample packs: https://strudel-samples.alternet.site/
+- Songs list: https://github.com/eefano/strudel-songs-collection
+- LukeWarm: https://warm.strudel.cc/
 
 ## Docs
 
@@ -163,8 +159,11 @@ all(x => x.mul(postgain(vol)))
 - https://www.youtube.com/@Prod.peppin
 - https://www.youtube.com/@aviarastudio
 - https://www.youtube.com/@duckattack-sound
+- 
 
-
-### Cool vids
+### Cool Examples
 
 - https://www.youtube.com/shorts/Jt9moluvxUo
+- https://tinyurl.com/yckc54t6
+- https://www.youtube.com/watch?v=CNishpWbFx4i
+- https://www.youtube.com/watch?v=SsUbCq7yoxo

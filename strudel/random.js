@@ -379,3 +379,96 @@ _harmony: note("<[c3,g3,e4]!2 [a2,e3,c4]!2 [f2,c3,a3]!2 [g2,d3,b3]!2>*2")
   .attack(0.4).release(0.6)
   .room(0.8).roomsize(6)
   .gain(0.8)
+
+// Ducking tutorial
+
+https://www.youtube.com/watch?v=uj85ZV2LnWQ
+
+$: s("bd").beat("0,4,8,11,14",16)
+  .bus(1).dry(0)
+.duck(4)
+
+$: s("modiji").begin("0.3").beat("0,4,8,11,14,17,39,9,10",16)
+  .gain(1).bmod({b:2})
+  .bus(1).dry(0)
+  .clip(1).rel(0)._scope()
+
+$: s("one").beat("0,4,8,11,14",16)
+  .fill()
+  .gain(0).env({a:0.5, s:0.5}).bus(2).dry(0)
+
+$: s("bus:1").soft(0)
+
+// Wubba lubba
+
+$: note("<[a0!3 a1 a2 a3]*16>".transpose(8))
+  .sound("saw")
+  .lpf(sine.range(30, 100))
+  .lpa(0.8)
+  .release(0.5)
+  .lpenv(18).gain(1).bus(1).dry(0)
+
+
+_$:s("sawtooth").note("<27 30 29 27>").lpf(400).fast(4).o(4)
+  .lpa(slider(1.475,0,5))
+  .lpe(slider(7.27,0,10))
+  .lpq(slider(12.495,0,15))
+
+
+// chill
+
+setcpm(100/4)
+
+$: note(`<c3 g2>/2, <C2 g2>/4,<e3 b4>/4, <g4 d4>/4`).sound("sine").room(50).attack(5).hpf(900).lpf(300).gain(0.4)
+
+$: n(irand(10).seg(8)).scale("c3:major").sound("triangle").room(0,9).gain(0,7)
+
+$: s('bd bd bd bd, -sd-[sd sd]').bank("RolandTR808")
+
+$: note("<c2 d2>/4").sound("saw").release(0).duck("2 3 4").lpf(400)
+
+$: note("<c1 d1>/4").sound("saw").release(0).duck("2 3 4").lpf(300)
+
+$: sound("< - - - [Casio:6*5 Casio:6]>?2").room(5).size(5). gain(0.3)
+
+
+// From scratch 101
+
+setcps(80 / 4)
+
+$: s("bd/8").orbit(2)
+  .duck(1).duckattack(0.15)
+
+$: s("hh/4").orbit(2).sometimes(ply("<2>")).clip(0.4).delay(0.9).room(0.8).decay(2)
+
+$: n("[0*1, 9, 6, 4]/4").s("<wt_digital, sawtooth>").scale("C:major")
+  .clip(0.5)
+  .lpenv(8)
+  .acidenv(0.8).phaser(0.4).room(0.6)
+.transpose("<0 0 1 2 0 1 3 4 3 3 4 0 2 1>/8")
+
+$: n("[0*1, 9, 6, 4]/2").s("sine").scale("C:major")
+  .clip(0.9)
+.transpose("<0 0 1 2 0 1 3 4 3 3 4 0 2 1>/8")
+
+
+// all(x => x.lpf(3000).hpf(1000))
+
+
+// vocal clip
+$: n("<0@2 1*2 2 3 <3 1> 4@2>*4").scale('Eb:dorian')
+.s("gm_lead_6_voice")
+.clip(sine.range(.2,.8).slow(8))
+.jux(rev)
+.room(2)
+.sometimes(add(note("12")))
+.lpf(perlin.range(200,20000).slow(4))
+
+
+// bird ambience
+$: n("<0@2 1*2 2 3 <3 1> 4@2>*4").sc().slow(16)
+    .arpu("0*2 1 2 3@1 5 6/2").slow(128)
+  .s("gm_bird_tweet")
+  .clip(sine.range(.2,.5).slow(8))
+  .jux(rev)
+  .room(2)

@@ -1,4 +1,10 @@
 // Because the internet. Thank you
+
+await import('https://glossing.dev/scripts.js')
+await (async () => { (0, eval)(await (await fetch('https://raw.githubusercontent.com/switchangel/strudel-scripts/refs/heads/main/prebake.strudel')).text()); })();
+
+setScale("B:minor")
+
 // https://raw.githubusercontent.com/IAmSpring/StrudelLive/refs/heads/main/server/strudel-knowledge.ts
 // https://github.com/switchangel/strudel-scripts/blob/main/prebake.strudel
 

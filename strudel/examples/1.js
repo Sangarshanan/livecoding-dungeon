@@ -100,3 +100,12 @@ $: n(irand(8).add(12).scale("minor")
    .s("piano")
    .phaser(0.9)
    ._pianoroll()
+
+
+
+// things with Jux
+
+$: n("0 ~ [0 0] <0 [0 0]>".add("0 2 0 <4 [4 [6 7]]>".slow(2)))
+  .scale("f2:minor").s("sine")
+  .distort("8:0.10:8").room(0.2).delay(0.1)
+  //.juxBy(0.8,rev)
