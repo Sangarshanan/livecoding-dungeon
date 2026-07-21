@@ -472,3 +472,38 @@ $: n("<0@2 1*2 2 3 <3 1> 4@2>*4").sc().slow(16)
   .clip(sine.range(.2,.5).slow(8))
   .jux(rev)
   .room(2)
+
+
+// Weird glitchy sound
+
+$: note("<e0 eb0 f0 d#0>")
+  .scale("C1:chromatic")
+  .arpu("<1@3 2 3 6 0@2 4@3>")
+  // .scaleTranspose(10)
+  .sound("saw")
+  .fast(4)
+  .jux(rev)
+  .fmwave("sine")
+  .fmi("<128 256 512 1024>")
+  .fmh(1/8)
+  .clip(0.2)
+  .diode("0.9")
+  .scope()
+
+
+// nice synth sound
+
+setcpm(120 / 4)
+
+$: chord("<Dm [Dm9 G] Am [Am9 G] Dm [Dm9 G] Em [F G]>").voicing().s("supersaw")
+.lpf("<2000 3000 <1000 1500>>*16")
+.struct("<x x - x < - x>>*16")
+.dec(perlin.range(.1,.15))
+.room(.5)
+.detune(perlin.range(.3,.6).slow(4))
+.lpenv(6)
+.lpa("<.3 .2 .1 .03>/2")
+
+$: chord("<Dm [Dm9 G] Am [Am9 G] Dm [Dm9 G] Em [F G]>").voicing().s("saw")
+  .lpf("1000")
+  .postgain(.7)
