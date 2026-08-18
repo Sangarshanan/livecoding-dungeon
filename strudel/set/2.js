@@ -60,3 +60,54 @@ $: n("0!4".sub(14)).scale("e:major").s("supersaw!16")
 
 /////
 
+
+setcpm(120 / 4)
+
+let sc = "E:major"
+
+_ambience: note("<0, 4, 8> <6 2 4 3>*2")
+  .scale(sc)
+  .s("sine, triangle")
+  .attack(0.1).release(2)
+  .rlpf(0.3).lpq(2).phaser(0.1)
+  .slow(2).postgain(1.5)
+  .duck(0.7)
+
+
+$: sound("<[Casio:6*5 Casio:6]>/2")
+  .room(5).size(5)
+  .gain(0.2)
+
+_$: s("bd(4, 8)").orbit(2).duck(1).duckattack(0.1)
+
+_$:  s("~ [sd]/2").decay(.1).delay(1).bpenv(0.5)
+_$:  s("ace_hh")
+  .delay(1)
+  .lpf(3000)
+  .clip(sine.range(0.05, 0.08)).sometimes(ply(2)).decay(2).gain(1.5)
+
+all(x => x.lpf(2000).hpf(1000))
+
+_$:s("sawtooth,tri,saw,sine")
+  .scale(sc)
+  .gain(saw.rev().range(3,1))
+  .lpf(saw.rangex(200,2200).slow(8))
+  .beat("3,7,9",16).vib(2,.5)
+  .clip(.7)
+  .delay(1/2)
+  .diode("1:.5")
+  .acidenv(slider(0.713))
+
+
+bg2: s("<shaktimaan>")
+  .ifit(2)
+  .scale(sc)
+  .slow(12).chop("10")
+  .postgain(1)
+  // .orbit(2)
+
+_bg1: s("<shaktimaan>")
+  .n(1).ifit(2.8)
+  .scrub(irand(16).div(8).seg(4))
+  .rib("<4 7 2>", 1) // <-2 2> <4 2> <4 7 2>
+
