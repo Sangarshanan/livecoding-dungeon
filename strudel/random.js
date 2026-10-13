@@ -507,3 +507,33 @@ $: chord("<Dm [Dm9 G] Am [Am9 G] Dm [Dm9 G] Em [F G]>").voicing().s("supersaw")
 $: chord("<Dm [Dm9 G] Am [Am9 G] Dm [Dm9 G] Em [F G]>").voicing().s("saw")
   .lpf("1000")
   .postgain(.7)
+
+
+// Microtonal Stuff
+
+setcpm(30)
+samples('github:yaxu/clean-breaks')
+
+chords: "<[9,23,40,53] [-22,-5,9,23] [0,17,31,48] [-14,0,17,30]>"
+  .fmap(v => Math.pow(2, v/53))
+  .mul(261.63)
+  .freq()
+  .superimpose(x=>x.add(.04))
+  .s("gm_lead_2_sawtooth")
+  .lpf(sine.range(600,1000).slow(8))
+  .attack(.2).release(.6)
+  .room(.5).gain(.35).duck(2).duckattack(0.1)
+
+bass: "<9 31 0 39>"
+  .fmap(v => Math.pow(2, v/53))
+  .mul(65.41)
+  .freq()
+  .s("triangle")
+  .lpf(500)
+  .gain(.6)
+
+$: s("amen")
+  .chop(19)
+  .o(2)
+  .scrub(irand(8).div(8).seg(8))
+  .loopAt(4)
